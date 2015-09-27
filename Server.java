@@ -1,3 +1,9 @@
+// Names: Aakash Patel, Meghan McCreary, Aaron (Shang Wei) Young, Katherine Chan
+// HC: We have adhered to the Honor Code for this assignment. A.P., M.M., A.Y., K.C.
+// Assignment 2: Multi-Threaded HTTP Server
+// CSCI 342 Fall 2015
+// Professor R. Salter
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,7 +31,10 @@ public class Server {
 		} catch (IOException e) {
 			System.err.println("Creating socket failed");
 			System.exit(1);
-		}
+		} catch (IllegalArgumentException e) {
+			System.err.println("Error binding to port");
+			System.exit(1);
+		} 
 		try {
 			while (true) {
 				try {
@@ -46,7 +55,7 @@ public class Server {
 	}
 
 	public void handle_client(Socket sock) throws IOException {
-		int statusCode = -1;
+		int statusCode = 500;
 		String contentType = "";
 		byte[] dat = new byte[2000];
 		int len = 0;
@@ -58,7 +67,7 @@ public class Server {
 			out = sock.getOutputStream();
 
 		} catch (IOException e) {
-			System.err.println("Receive failed");
+			System.err.println("Error: receive fails");
 			sock.close();
 			return;
 		}
@@ -67,10 +76,10 @@ public class Server {
 				String s0 = new String(dat, 0, len);
 				content.append(s0);
 				//System.out.println("DATA: " + content);;
-				if (content.toString().contains("\r\n\r\n")) break; // done reading GET request
+				if (content.toString().contains("\r\n\r\n")){break;}
 			}
 			if (len == -1) {
-				System.err.println("receiving request failed");
+				System.err.println("Error: receive fails");
 				sock.close();
 				return; // TODO: need to close thread, not main process
 			}
@@ -197,10 +206,6 @@ public class Server {
 		int port = 0;
 		try {
 			port = Integer.parseInt(arg[0]);
-			if (port<=0 || port>65535) {
-				System.err.println("Usage: hw2 <port> <folder>. Invalid port number.");
-				System.exit(-1);
-			}
 		}
 		catch(NumberFormatException e) {
 			System.err.println("Usage: hw2 <port> <folder>. Invalid port number.");
